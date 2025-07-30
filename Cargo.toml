@@ -1,0 +1,21 @@
+[package]
+name = "openai-mock"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+poem = { version = "3.0", features = ["test"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+tokio = { version = "1.0", features = ["full"] }
+uuid = { version = "1.0", features = ["v4"] }
+chrono = { version = "0.4", features = ["serde"] }
+anyhow = "1.0"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+clap = { version = "4.0", features = ["derive"] }
+
+[dev-dependencies]
+portpicker = "0.1"
+reqwest = { version = "0.12", features = ["json"] }
+futures = "0.3"
