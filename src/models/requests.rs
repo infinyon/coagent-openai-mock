@@ -388,14 +388,14 @@ impl CreateChatCompletionRequest {
 
         // Validate temperature is within bounds
         if let Some(temp) = self.temperature {
-            if temp < 0.0 || temp > 2.0 {
+            if !(0.0..=2.0).contains(&temp) {
                 return Err("Temperature must be between 0 and 2".to_string());
             }
         }
 
         // Validate top_p is within bounds
         if let Some(top_p) = self.top_p {
-            if top_p < 0.0 || top_p > 1.0 {
+            if !(0.0..=1.0).contains(&top_p) {
                 return Err("Top_p must be between 0 and 1".to_string());
             }
         }
@@ -416,14 +416,14 @@ impl CreateChatCompletionRequest {
 
         // Validate presence_penalty is within bounds
         if let Some(penalty) = self.presence_penalty {
-            if penalty < -2.0 || penalty > 2.0 {
+            if !(-2.0..=2.0).contains(&penalty) {
                 return Err("Presence penalty must be between -2.0 and 2.0".to_string());
             }
         }
 
         // Validate frequency_penalty is within bounds
         if let Some(penalty) = self.frequency_penalty {
-            if penalty < -2.0 || penalty > 2.0 {
+            if !(-2.0..=2.0).contains(&penalty) {
                 return Err("Frequency penalty must be between -2.0 and 2.0".to_string());
             }
         }
@@ -431,7 +431,7 @@ impl CreateChatCompletionRequest {
         // Validate messages
         for (i, message) in self.messages.iter().enumerate() {
             if let Err(err) = message.validate() {
-                return Err(format!("Invalid message at index {}: {}", i, err));
+                return Err(format!("Invalid message at index {i}: {err}"));
             }
         }
 
@@ -534,7 +534,7 @@ impl CreateEmbeddingRequest {
                 vec![format!("{:?}", arr)]
             }
             EmbeddingInput::IntegerArrayArray(arr) => {
-                arr.iter().map(|inner| format!("{:?}", inner)).collect()
+                arr.iter().map(|inner| format!("{inner:?}")).collect()
             }
         }
     }

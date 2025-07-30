@@ -158,7 +158,7 @@ fn main() {
         );
         for (token, logprob) in logprobs.tokens.iter().zip(logprobs.token_logprobs.iter()) {
             if let Some(prob) = logprob {
-                println!("  '{}': {:.3}", token, prob);
+                println!("  '{token}': {prob:.3}");
             }
         }
     }

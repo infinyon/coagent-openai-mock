@@ -26,7 +26,7 @@ pub fn create_test_config() -> (Config, u16) {
 /// Creates a test server with a free port and returns the config, base URL, and port
 pub fn create_test_server() -> (Config, String, u16) {
     let (config, port) = create_test_config();
-    let base_url = format!("http://127.0.0.1:{}", port);
+    let base_url = format!("http://127.0.0.1:{port}");
 
     (config, base_url, port)
 }
@@ -40,7 +40,7 @@ pub fn create_test_server_with_key(api_key: &str) -> (Config, String, u16) {
         .api_key(api_key)
         .build();
 
-    let base_url = format!("http://127.0.0.1:{}", port);
+    let base_url = format!("http://127.0.0.1:{port}");
 
     (config, base_url, port)
 }
@@ -51,7 +51,7 @@ pub fn create_test_server_with_key(api_key: &str) -> (Config, String, u16) {
 /// Useful for ensuring the server is fully started before running tests.
 pub async fn wait_for_server_ready(base_url: &str) -> Result<(), Box<dyn std::error::Error>> {
     let client = reqwest::Client::new();
-    let health_url = format!("{}/health", base_url);
+    let health_url = format!("{base_url}/health");
 
     // Try to connect for up to 5 seconds
     let result = timeout(Duration::from_secs(5), async {
@@ -67,30 +67,6 @@ pub async fn wait_for_server_ready(base_url: &str) -> Result<(), Box<dyn std::er
     match result {
         Ok(_) => Ok(()),
         Err(_) => Err("Server did not become ready in time".into()),
-    }
-}
-
-/// Helper function to wait for server to be ready with custom timeout
-pub async fn wait_for_server_ready_with_timeout(
-    base_url: &str,
-    timeout_secs: u64,
-) -> Result<(), Box<dyn std::error::Error>> {
-    let client = reqwest::Client::new();
-    let health_url = format!("{}/health", base_url);
-
-    let result = timeout(Duration::from_secs(timeout_secs), async {
-        loop {
-            match client.get(&health_url).send().await {
-                Ok(response) if response.status().is_success() => break,
-                _ => tokio::time::sleep(Duration::from_millis(50)).await,
-            }
-        }
-    })
-    .await;
-
-    match result {
-        Ok(_) => Ok(()),
-        Err(_) => Err(format!("Server did not become ready in {} seconds", timeout_secs).into()),
     }
 }
 
@@ -110,7 +86,7 @@ impl TestServer {
 
         let server_handle = tokio::spawn(async move {
             if let Err(e) = Server::new(listener).run(app).await {
-                eprintln!("Test server error: {}", e);
+                eprintln!("Test server error: {e}");
             }
         });
 
@@ -131,7 +107,7 @@ impl TestServer {
 
         let server_handle = tokio::spawn(async move {
             if let Err(e) = Server::new(listener).run(app).await {
-                eprintln!("Test server error: {}", e);
+                eprintln!("Test server error: {e}");
             }
         });
 
@@ -216,7 +192,7 @@ mod tests {
     #[test]
     fn test_create_test_server() {
         let (_config, base_url, port) = create_test_server();
-        assert_eq!(base_url, format!("http://127.0.0.1:{}", port));
+        assert_eq!(base_url, format!("http://127.0.0.1:{port}"));
         assert!(port > 1024);
     }
 
@@ -224,7 +200,7 @@ mod tests {
     fn test_create_test_server_with_key() {
         let custom_key = "sk-custom-test-key";
         let (_config, base_url, port) = create_test_server_with_key(custom_key);
-        assert_eq!(base_url, format!("http://127.0.0.1:{}", port));
+        assert_eq!(base_url, format!("http://127.0.0.1:{port}"));
         assert!(port > 1024);
     }
 
@@ -237,7 +213,7 @@ mod tests {
         // Server should be ready
         let client = reqwest::Client::new();
         let response = client
-            .get(&format!("{}/health", server.url()))
+            .get(format!("{}/health", server.url()))
             .send()
             .await
             .expect("Health check should work");
@@ -257,9 +233,9 @@ mod tests {
         // Test that the server is using the custom key
         let client = reqwest::Client::new();
         let response = client
-            .post(&format!("{}/v1/completions", server.url()))
+            .post(format!("{}/v1/completions", server.url()))
             .header("Content-Type", "application/json")
-            .header("Authorization", format!("Bearer {}", custom_key))
+            .header("Authorization", format!("Bearer {custom_key}"))
             .json(&serde_json::json!({
                 "model": "text-davinci-003",
                 "prompt": "Test"

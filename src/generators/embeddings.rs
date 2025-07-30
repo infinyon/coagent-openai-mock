@@ -81,7 +81,7 @@ impl EmbeddingGenerator {
             EmbeddingInput::IntegerArrayArray(arr) => {
                 // Convert each integer array to a string representation
                 arr.iter()
-                    .map(|inner_arr| format!("{:?}", inner_arr))
+                    .map(|inner_arr| format!("{inner_arr:?}"))
                     .collect()
             }
         }
@@ -140,7 +140,7 @@ impl EmbeddingGenerator {
     }
 
     /// Normalize a vector to unit length
-    fn normalize_vector(vector: &mut Vec<f64>) {
+    fn normalize_vector(vector: &mut [f64]) {
         let magnitude: f64 = vector.iter().map(|x| x * x).sum::<f64>().sqrt();
 
         if magnitude > 0.0 {
@@ -254,9 +254,7 @@ mod tests {
             assert_eq!(
                 response.data[0].embedding.len(),
                 expected_dims,
-                "Model {} should have {} dimensions",
-                model,
-                expected_dims
+                "Model {model} should have {expected_dims} dimensions"
             );
         }
     }
@@ -282,8 +280,7 @@ mod tests {
         // Vector should be approximately unit length (allowing for floating point precision)
         assert!(
             (magnitude - 1.0).abs() < 1e-10,
-            "Vector magnitude should be close to 1.0, got {}",
-            magnitude
+            "Vector magnitude should be close to 1.0, got {magnitude}"
         );
     }
 
@@ -388,9 +385,8 @@ mod tests {
         // All values should be in a reasonable range (since we normalize, they should be between -1 and 1)
         for &value in vector {
             assert!(
-                value >= -1.0 && value <= 1.0,
-                "Vector value {} is out of range [-1, 1]",
-                value
+                (-1.0..=1.0).contains(&value),
+                "Vector value {value} is out of range [-1, 1]"
             );
         }
     }

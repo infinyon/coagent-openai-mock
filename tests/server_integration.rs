@@ -13,7 +13,7 @@ async fn test_server_startup_and_health_check() {
     // Test health endpoint
     let client = reqwest::Client::new();
     let response = client
-        .get(&format!("{}/health", server.url()))
+        .get(format!("{}/health", server.url()))
         .send()
         .await
         .expect("Health check request failed");
@@ -47,7 +47,7 @@ async fn test_completions_endpoint_integration() {
     });
 
     let response = client
-        .post(&format!("{}/v1/completions", server.url()))
+        .post(format!("{}/v1/completions", server.url()))
         .header("Content-Type", "application/json")
         .header("Authorization", "Bearer sk-test-integration-key")
         .json(&request_body)
@@ -92,7 +92,7 @@ async fn test_chat_completions_endpoint_integration() {
     });
 
     let response = client
-        .post(&format!("{}/v1/chat/completions", server.url()))
+        .post(format!("{}/v1/chat/completions", server.url()))
         .header("Content-Type", "application/json")
         .header("Authorization", "Bearer sk-test-integration-key")
         .json(&request_body)
@@ -135,7 +135,7 @@ async fn test_embeddings_endpoint_integration() {
     });
 
     let response = client
-        .post(&format!("{}/v1/embeddings", server.url()))
+        .post(format!("{}/v1/embeddings", server.url()))
         .header("Content-Type", "application/json")
         .header("Authorization", "Bearer sk-test-integration-key")
         .json(&request_body)
@@ -175,7 +175,7 @@ async fn test_authentication_errors() {
     });
 
     let response = client
-        .post(&format!("{}/v1/completions", server.url()))
+        .post(format!("{}/v1/completions", server.url()))
         .header("Content-Type", "application/json")
         .json(&request_body)
         .send()
@@ -186,7 +186,7 @@ async fn test_authentication_errors() {
 
     // Test invalid authorization
     let response = client
-        .post(&format!("{}/v1/completions", server.url()))
+        .post(format!("{}/v1/completions", server.url()))
         .header("Content-Type", "application/json")
         .header("Authorization", "Bearer invalid-key")
         .json(&request_body)
@@ -216,7 +216,7 @@ async fn test_concurrent_requests() {
             });
 
             let response = client
-                .post(&format!("{}/v1/completions", base_url))
+                .post(format!("{base_url}/v1/completions"))
                 .header("Content-Type", "application/json")
                 .header("Authorization", "Bearer sk-test-integration-key")
                 .json(&request_body)
@@ -261,12 +261,12 @@ async fn test_multiple_servers_different_ports() {
     let client = reqwest::Client::new();
 
     let response1 = client
-        .get(&format!("{}/health", server1.url()))
+        .get(format!("{}/health", server1.url()))
         .send()
         .await
         .expect("Health check 1 failed");
     let response2 = client
-        .get(&format!("{}/health", server2.url()))
+        .get(format!("{}/health", server2.url()))
         .send()
         .await
         .expect("Health check 2 failed");

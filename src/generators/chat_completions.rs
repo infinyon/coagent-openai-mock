@@ -103,7 +103,7 @@ impl ChatCompletionGenerator {
         let uuid = Uuid::new_v4();
         format!(
             "chatcmpl-{}",
-            uuid.to_string().replace("-", "")[..29].to_string()
+            &uuid.to_string().replace("-", "")[..29]
         )
     }
 
@@ -228,7 +228,7 @@ impl ChatCompletionGenerator {
     ) -> ChatCompletionMessageToolCall {
         let call_id = format!(
             "call_{}",
-            Uuid::new_v4().to_string().replace("-", "")[..24].to_string()
+            &Uuid::new_v4().to_string().replace("-", "")[..24]
         );
         let function_name = tool.function.name.clone();
 

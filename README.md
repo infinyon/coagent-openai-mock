@@ -424,8 +424,6 @@ async fn test_with_custom_port() {
 }
 ```
 
-For detailed testing patterns and examples, see [`docs/TESTING_WITH_PORTPICKER.md`](docs/TESTING_WITH_PORTPICKER.md).
-
 ### Running with Debug Logging
 
 ```bash

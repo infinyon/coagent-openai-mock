@@ -20,7 +20,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Validate configuration
     if let Err(e) = config.validate() {
-        eprintln!("Configuration error: {}", e);
+        eprintln!("Configuration error: {e}");
         std::process::exit(1);
     }
 
@@ -67,13 +67,6 @@ fn print_startup_info(config: &Config) {
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    #[test]
-    fn test_main_module_structure() {
-        // Test that all modules are properly declared
-        // This is a compile-time test - if it compiles, the modules are correctly structured
-        assert!(true);
-    }
 
     #[test]
     fn test_startup_info_formatting() {

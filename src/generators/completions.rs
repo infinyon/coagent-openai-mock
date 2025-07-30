@@ -91,7 +91,7 @@ impl CompletionGenerator {
         let uuid = Uuid::new_v4();
         format!(
             "cmpl-{}",
-            uuid.to_string().replace("-", "")[..24].to_string()
+            &uuid.to_string().replace("-", "")[..24]
         )
     }
 
@@ -152,7 +152,7 @@ impl CompletionGenerator {
 
         // Add echo if requested
         if request.echo.unwrap_or(false) {
-            format!("{}{}", prompt, completion)
+            format!("{prompt}{completion}")
         } else {
             completion
         }
@@ -160,13 +160,11 @@ impl CompletionGenerator {
 
     /// Generate greeting-style completions
     fn get_greeting_completion(prompt: &str, max_tokens: u32) -> String {
-        let responses = vec![
-            " Hello! How can I help you today?",
+        let responses = [" Hello! How can I help you today?",
             " Hi there! Nice to meet you.",
             " Hello! I'm here to assist you.",
             " Hi! What would you like to know?",
-            " Hello! Feel free to ask me anything.",
-        ];
+            " Hello! Feel free to ask me anything."];
 
         let response = responses[prompt.len() % responses.len()];
         Self::truncate_to_tokens(response, max_tokens)
@@ -174,12 +172,10 @@ impl CompletionGenerator {
 
     /// Generate creative writing completions
     fn get_creative_completion(_prompt: &str, max_tokens: u32) -> String {
-        let responses = vec![
-            " Once upon a time, in a land far away, there lived a curious explorer who discovered amazing secrets hidden in ancient ruins.",
+        let responses = [" Once upon a time, in a land far away, there lived a curious explorer who discovered amazing secrets hidden in ancient ruins.",
             " The story begins on a rainy Tuesday morning when everything seemed ordinary, but little did anyone know that extraordinary events were about to unfold.",
             " In the bustling city, among the towering skyscrapers and busy streets, a small coffee shop held the key to an incredible adventure.",
-            " The old library contained more than just books - it held mysteries that had been waiting centuries to be uncovered by the right person.",
-        ];
+            " The old library contained more than just books - it held mysteries that had been waiting centuries to be uncovered by the right person."];
 
         let response = responses[chrono::Utc::now().timestamp() as usize % responses.len()];
         Self::truncate_to_tokens(response, max_tokens)
@@ -187,12 +183,10 @@ impl CompletionGenerator {
 
     /// Generate explanatory completions
     fn get_explanatory_completion(_prompt: &str, max_tokens: u32) -> String {
-        let responses = vec![
-            " This is a complex topic that involves multiple interconnected concepts. Let me break it down into simpler parts for better understanding.",
+        let responses = [" This is a complex topic that involves multiple interconnected concepts. Let me break it down into simpler parts for better understanding.",
             " The fundamental principle behind this is based on well-established scientific theories that have been validated through extensive research.",
             " To understand this properly, we need to consider the historical context and how various factors have influenced its development over time.",
-            " This concept can be explained through a practical example that demonstrates its real-world applications and benefits.",
-        ];
+            " This concept can be explained through a practical example that demonstrates its real-world applications and benefits."];
 
         let response = responses[chrono::Utc::now().day() as usize % responses.len()];
         Self::truncate_to_tokens(response, max_tokens)
@@ -200,12 +194,10 @@ impl CompletionGenerator {
 
     /// Generate code-related completions
     fn get_code_completion(_prompt: &str, max_tokens: u32) -> String {
-        let responses = vec![
-            "\n```rust\nfn example() {\n    println!(\"Hello, world!\");\n}\n```",
+        let responses = ["\n```rust\nfn example() {\n    println!(\"Hello, world!\");\n}\n```",
             "\n```python\ndef example():\n    print(\"Hello, world!\")\n    return True\n```",
             "\n```javascript\nfunction example() {\n    console.log(\"Hello, world!\");\n    return true;\n}\n```",
-            "\n```java\npublic void example() {\n    System.out.println(\"Hello, world!\");\n}\n```",
-        ];
+            "\n```java\npublic void example() {\n    System.out.println(\"Hello, world!\");\n}\n```"];
 
         let response = responses[chrono::Utc::now().hour() as usize % responses.len()];
         Self::truncate_to_tokens(response, max_tokens)
@@ -213,13 +205,11 @@ impl CompletionGenerator {
 
     /// Generate general purpose completions
     fn get_general_completion(_prompt: &str, max_tokens: u32) -> String {
-        let responses = vec![
-            " This is an interesting topic that deserves careful consideration and thoughtful analysis.",
+        let responses = [" This is an interesting topic that deserves careful consideration and thoughtful analysis.",
             " There are several important factors to consider when approaching this subject matter.",
             " The key to understanding this lies in examining the underlying principles and their practical applications.",
             " This represents a fascinating area of study with many opportunities for further exploration.",
-            " The complexity of this subject requires a multifaceted approach to fully appreciate its nuances.",
-        ];
+            " The complexity of this subject requires a multifaceted approach to fully appreciate its nuances."];
 
         let hash = Self::simple_hash(_prompt);
         let response = responses[hash % responses.len()];
@@ -301,8 +291,8 @@ impl CompletionGenerator {
 
             // Add some fake alternatives
             if word.len() > 3 {
-                top_map.insert(format!("{}s", word), logprob - 0.5);
-                top_map.insert(format!("un{}", word), logprob - 1.0);
+                top_map.insert(format!("{word}s"), logprob - 0.5);
+                top_map.insert(format!("un{word}"), logprob - 1.0);
             }
 
             top_logprobs.push(Some(top_map));

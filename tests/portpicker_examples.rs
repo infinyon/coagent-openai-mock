@@ -15,7 +15,7 @@ use tokio::sync::Barrier;
 async fn example_basic_portpicker() {
     // Pick a free port manually
     let port = portpicker::pick_unused_port().expect("Should pick a free port");
-    println!("Selected port: {}", port);
+    println!("Selected port: {port}");
 
     // Use it in your test configuration
     let config = Config::builder()
@@ -40,7 +40,7 @@ async fn example_test_server_wrapper() {
     // Test your endpoints
     let client = reqwest::Client::new();
     let response = client
-        .get(&format!("{}/health", server.url()))
+        .get(format!("{}/health", server.url()))
         .send()
         .await
         .expect("Health check should work");
@@ -60,7 +60,7 @@ async fn example_multiple_servers() {
 
     // Verify they all have different ports
     let ports = vec![server1.port(), server2.port(), server3.port()];
-    println!("Allocated ports: {:?}", ports);
+    println!("Allocated ports: {ports:?}");
 
     // All ports should be unique
     for i in 0..ports.len() {
@@ -73,7 +73,7 @@ async fn example_multiple_servers() {
     let client = reqwest::Client::new();
     for server in [&server1, &server2, &server3] {
         let response = client
-            .get(&format!("{}/health", server.url()))
+            .get(format!("{}/health", server.url()))
             .send()
             .await
             .expect("Health check should work");
@@ -86,7 +86,7 @@ async fn example_multiple_servers() {
 async fn example_preallocate_ports() {
     // Sometimes you need to know all ports upfront
     let ports = pick_multiple_ports(3);
-    println!("Pre-allocated ports: {:?}", ports);
+    println!("Pre-allocated ports: {ports:?}");
 
     // Create configs with the pre-allocated ports
     let configs: Vec<_> = ports
@@ -96,7 +96,7 @@ async fn example_preallocate_ports() {
             Config::builder()
                 .host("127.0.0.1")
                 .port(port)
-                .api_key(&format!("sk-test-key-{}", i))
+                .api_key(format!("sk-test-key-{i}"))
                 .build()
         })
         .collect();
@@ -124,7 +124,7 @@ async fn example_parallel_test_isolation() {
             // Each task gets its own server with a unique port
             let server = TestServer::start()
                 .await
-                .expect(&format!("Server {} should start", i));
+                .unwrap_or_else(|_| panic!("Server {i} should start"));
 
             println!("Task {} got port {}", i, server.port());
 
@@ -134,10 +134,10 @@ async fn example_parallel_test_isolation() {
             // Perform the actual test
             let client = reqwest::Client::new();
             let response = client
-                .get(&format!("{}/health", server.url()))
+                .get(format!("{}/health", server.url()))
                 .send()
                 .await
-                .expect(&format!("Health check {} should work", i));
+                .unwrap_or_else(|_| panic!("Health check {i} should work"));
 
             assert!(response.status().is_success());
 
@@ -153,13 +153,12 @@ async fn example_parallel_test_isolation() {
         .expect("All tasks should complete successfully");
 
     // Verify all tasks got different ports
-    println!("All task ports: {:?}", results);
+    println!("All task ports: {results:?}");
     for i in 0..results.len() {
         for j in i + 1..results.len() {
             assert_ne!(
                 results[i], results[j],
-                "Tasks {} and {} should have different ports",
-                i, j
+                "Tasks {i} and {j} should have different ports"
             );
         }
     }
@@ -177,11 +176,11 @@ async fn example_port_exhaustion_handling() {
     for i in 0..max_attempts {
         match portpicker::pick_unused_port() {
             Some(port) => {
-                println!("Attempt {}: Got port {}", i, port);
+                println!("Attempt {i}: Got port {port}");
                 successful_allocations += 1;
             }
             None => {
-                println!("Attempt {}: No free port available", i);
+                println!("Attempt {i}: No free port available");
                 break;
             }
         }
@@ -192,7 +191,7 @@ async fn example_port_exhaustion_handling() {
         successful_allocations > 0,
         "Should be able to allocate at least one port"
     );
-    println!("Successfully allocated {} ports", successful_allocations);
+    println!("Successfully allocated {successful_allocations} ports");
 }
 
 /// Example 7: Custom port range (if your system supports it)
@@ -210,20 +209,20 @@ async fn example_port_selection_patterns() {
         if let Some(port) = portpicker::pick_unused_port() {
             if port > 40000 {
                 high_ports.push(port);
-                println!("Found high port: {}", port);
+                println!("Found high port: {port}");
             }
         }
         attempts += 1;
     }
 
     if !high_ports.is_empty() {
-        println!("High ports found: {:?}", high_ports);
+        println!("High ports found: {high_ports:?}");
 
         // Use one of the high ports for testing
         let server = TestServer::start().await.expect("Server should start");
         println!("Server started on port: {}", server.port());
     } else {
-        println!("No high ports found in {} attempts", MAX_ATTEMPTS);
+        println!("No high ports found in {MAX_ATTEMPTS} attempts");
     }
 }
 
@@ -240,7 +239,7 @@ async fn example_external_service_integration() {
         portpicker::pick_unused_port().expect("Should pick port for mock external service");
 
     println!("Main server: {}", main_server.url());
-    println!("Mock external service port: {}", mock_external_port);
+    println!("Mock external service port: {mock_external_port}");
 
     // In a real test, you might start an actual mock service here
     // For this example, we'll just verify the ports are different
@@ -253,7 +252,7 @@ async fn example_external_service_integration() {
     // Test the main server
     let client = reqwest::Client::new();
     let response = client
-        .get(&format!("{}/health", main_server.url()))
+        .get(format!("{}/health", main_server.url()))
         .send()
         .await
         .expect("Health check should work");
@@ -284,21 +283,21 @@ async fn example_performance_testing() {
     let server = TestServer::start().await.expect("Server should start");
     let startup_time = start.elapsed();
 
-    println!("Server startup took: {:?}", startup_time);
+    println!("Server startup took: {startup_time:?}");
     println!("Server running on port: {}", server.port());
 
     // Verify the server is responsive
     let client = reqwest::Client::new();
     let start = Instant::now();
     let response = client
-        .get(&format!("{}/health", server.url()))
+        .get(format!("{}/health", server.url()))
         .send()
         .await
         .expect("Health check should work");
     let response_time = start.elapsed();
 
     assert!(response.status().is_success());
-    println!("Health check response time: {:?}", response_time);
+    println!("Health check response time: {response_time:?}");
 
     // Assert reasonable performance (adjust thresholds as needed)
     assert!(
@@ -331,7 +330,7 @@ async fn example_error_handling() {
                 // Test the server
                 let client = reqwest::Client::new();
                 let response = client
-                    .get(&format!("{}/health", server.url()))
+                    .get(format!("{}/health", server.url()))
                     .send()
                     .await
                     .expect("Health check should work");
@@ -353,7 +352,6 @@ async fn example_error_handling() {
 
     // If we get here, all attempts failed
     panic!(
-        "Failed to start server after {} attempts. Last error: {:?}",
-        max_retries, last_error
+        "Failed to start server after {max_retries} attempts. Last error: {last_error:?}"
     );
 }

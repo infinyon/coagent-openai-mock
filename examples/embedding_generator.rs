@@ -171,11 +171,11 @@ fn main() {
     let max_value = vector.iter().fold(f64::NEG_INFINITY, |a, &b| a.max(b));
 
     println!("Example 8: Vector Properties");
-    println!("Vector magnitude: {:.10} (should be ~1.0)", magnitude);
-    println!("Value range: [{:.6}, {:.6}]", min_value, max_value);
+    println!("Vector magnitude: {magnitude:.10} (should be ~1.0)");
+    println!("Value range: [{min_value:.6}, {max_value:.6}]");
     println!(
         "All values in [-1, 1]: {}",
-        vector.iter().all(|&x| x >= -1.0 && x <= 1.0)
+        vector.iter().all(|&x| (-1.0..=1.0).contains(&x))
     );
 
     println!("\n==========================================");

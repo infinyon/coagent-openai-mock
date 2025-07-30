@@ -21,7 +21,7 @@ fn main() {
         "Unsupervised learning finds patterns in unlabeled data".to_string(),
     ];
 
-    println!("🤖 Chatbot Scenario: User asks '{}'", user_query);
+    println!("🤖 Chatbot Scenario: User asks '{user_query}'");
     println!("📚 Knowledge base has {} entries\n", knowledge_base.len());
 
     // Step 1: Generate embeddings for the user query
@@ -75,14 +75,13 @@ fn main() {
     let most_relevant_idx = 0; // In reality, this would be the highest similarity score
     let most_relevant_context = &knowledge_base[most_relevant_idx];
     println!("✅ Most relevant context found:");
-    println!("   - Index: {}", most_relevant_idx);
-    println!("   - Text: '{}'", most_relevant_context);
+    println!("   - Index: {most_relevant_idx}");
+    println!("   - Text: '{most_relevant_context}'");
 
     // Step 4: Generate completion using the relevant context
     println!("\nStep 4: Generating completion with context...");
     let completion_prompt = format!(
-        "Context: {}\n\nQuestion: {}\n\nAnswer:",
-        most_relevant_context, user_query
+        "Context: {most_relevant_context}\n\nQuestion: {user_query}\n\nAnswer:"
     );
 
     let completion_request = CreateCompletionRequest {
@@ -133,14 +132,14 @@ fn main() {
     let completion_response_2 = CompletionGenerator::generate_response(&completion_request);
     let completions_identical =
         completion_response.choices[0].text == completion_response_2.choices[0].text;
-    println!("✅ Completion consistency: {}", completions_identical);
+    println!("✅ Completion consistency: {completions_identical}");
 
     // Test embedding consistency
     let query_embedding_response_2 =
         EmbeddingGenerator::generate_response(&query_embedding_request);
     let embeddings_identical =
         query_embedding_response.data[0].embedding == query_embedding_response_2.data[0].embedding;
-    println!("✅ Embedding consistency: {}", embeddings_identical);
+    println!("✅ Embedding consistency: {embeddings_identical}");
 
     // Performance metrics summary
     println!("\n{}", "=".repeat(50));
@@ -161,13 +160,13 @@ fn main() {
         "  - Knowledge base embeddings: {} tokens",
         kb_embedding_response.usage.prompt_tokens
     );
-    println!("  - Total embedding tokens: {}", total_embedding_tokens);
+    println!("  - Total embedding tokens: {total_embedding_tokens}");
 
     println!("\nCompletion operations:");
-    println!("  - Completion tokens: {}", total_completion_tokens);
+    println!("  - Completion tokens: {total_completion_tokens}");
 
     println!("\nOverall:");
-    println!("  - Total API tokens: {}", total_tokens);
+    println!("  - Total API tokens: {total_tokens}");
     println!("  - Number of API calls: 3 (1 query embedding + 1 KB embedding + 1 completion)");
     println!(
         "  - Knowledge base entries processed: {}",

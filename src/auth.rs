@@ -4,36 +4,6 @@ use std::fmt;
 
 use crate::models::responses::ErrorResponse;
 
-/// # Authentication Middleware
-///
-/// This module provides authentication middleware for the OpenAI mock server.
-/// The middleware validates API keys using Bearer token authentication.
-///
-/// ## Usage Example
-///
-/// ```rust
-/// use poem::{Route, post, handler, EndpointExt};
-/// use openai_mock::auth::AuthMiddleware;
-///
-/// #[handler]
-/// async fn protected_endpoint() -> &'static str {
-///     "This endpoint requires authentication"
-/// }
-///
-/// let app = Route::new()
-///     .at("/v1/completions", post(protected_endpoint))
-///     .with(AuthMiddleware::new("sk-mock-openai-api-key-12345"));
-/// ```
-///
-/// ## API Key
-///
-/// The middleware validates against the hardcoded API key: `sk-mock-openai-api-key-12345`
-///
-/// Requests must include the Authorization header in the format:
-/// ```text
-/// Authorization: Bearer sk-mock-openai-api-key-12345
-/// ```
-
 /// The default API key that the mock server accepts
 pub const DEFAULT_MOCK_API_KEY: &str = "sk-mock-openai-api-key-12345";
 
@@ -273,7 +243,7 @@ mod tests {
         let req = Request::builder()
             .method(Method::GET)
             .uri(Uri::from_static("/test"))
-            .header("authorization", format!("Bearer {}", DEFAULT_MOCK_API_KEY))
+            .header("authorization", format!("Bearer {DEFAULT_MOCK_API_KEY}"))
             .finish();
 
         let resp = app.call(req).await.unwrap();
@@ -286,7 +256,7 @@ mod tests {
     #[tokio::test]
     async fn test_extract_api_key_success() {
         let req = Request::builder()
-            .header("authorization", format!("Bearer {}", DEFAULT_MOCK_API_KEY))
+            .header("authorization", format!("Bearer {DEFAULT_MOCK_API_KEY}"))
             .finish();
 
         let result = extract_api_key(&req, DEFAULT_MOCK_API_KEY);
@@ -345,7 +315,7 @@ mod tests {
         let req = Request::builder()
             .method(Method::GET)
             .uri(Uri::from_static("/test"))
-            .header("authorization", format!("Bearer {}", custom_key))
+            .header("authorization", format!("Bearer {custom_key}"))
             .finish();
 
         let resp = app.call(req).await.unwrap();
@@ -355,7 +325,7 @@ mod tests {
         let req = Request::builder()
             .method(Method::GET)
             .uri(Uri::from_static("/test"))
-            .header("authorization", format!("Bearer {}", DEFAULT_MOCK_API_KEY))
+            .header("authorization", format!("Bearer {DEFAULT_MOCK_API_KEY}"))
             .finish();
 
         let resp = app.call(req).await.unwrap();
@@ -381,7 +351,7 @@ mod tests {
 
         // Test with matching custom key
         let req = Request::builder()
-            .header("authorization", format!("Bearer {}", custom_key))
+            .header("authorization", format!("Bearer {custom_key}"))
             .finish();
 
         let result = extract_api_key(&req, custom_key);
