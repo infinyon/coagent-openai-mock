@@ -309,7 +309,7 @@ mod tests {
     fn test_default_config() {
         let config = Config::default();
         assert_eq!(config.host, "0.0.0.0");
-        assert_eq!(config.port, 3000);
+        assert_eq!(config.port, 13673);
         assert!(config.enable_cors);
         assert!(config.enable_logging);
     }

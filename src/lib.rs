@@ -19,7 +19,7 @@
 //! cargo run
 //! ```
 //!
-//! The server will be available at `http://localhost:3000` with the following endpoints:
+//! The server will be available at `http://localhost:13673` with the following endpoints:
 //! - `GET /` - Server information
 //! - `GET /health` - Health check
 //! - `POST /v1/completions` - Text completion (requires authentication)
@@ -35,7 +35,7 @@
 //! ## Environment Variables
 //!
 //! - `HOST`: Server host address (default: 0.0.0.0)
-//! - `PORT`: Server port (default: 3000)
+//! - `PORT`: Server port (default: 13673)
 //! - `RUST_LOG`: Logging level (default: info)
 
 pub mod auth;

@@ -7,7 +7,7 @@
 //! ## Command Line Arguments
 //!
 //! - `--host`: Server host address (default: 0.0.0.0)
-//! - `--port`: Server port (default: 3000)
+//! - `--port`: Server port (default: 13673)
 //! - `--api-key`: API key for authentication (default: sk-mock-openai-api-key-12345)
 //! - `--request-timeout-secs`: Request timeout in seconds (default: 30)
 //! - `--enable-cors`: Enable CORS support (default: true)
@@ -28,7 +28,7 @@ use clap::Parser;
 use std::time::Duration;
 
 const DEFAULT_HOST: &str = "0.0.0.0";
-const DEFAULT_PORT: u16 = 3000;
+const DEFAULT_PORT: u16 = 13673;
 const DEFAULT_API_KEY: &str = "sk-mock-openai-api-key-12345";
 const DEFAULT_REQUEST_TIMEOUT_SECS: u64 = 30;
 const DEFAULT_ENABLE_CORS: bool = true;

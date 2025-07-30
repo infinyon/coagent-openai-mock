@@ -78,34 +78,6 @@ cargo run -- --help
 cargo run -- --version
 ```
 
-### Migration from Environment Variables
-
-If you were previously using environment variables, here's the mapping to CLI arguments:
-
-| Old Environment Variable | New CLI Argument |
-|--------------------------|------------------|
-| `HOST=127.0.0.1` | `--host 127.0.0.1` |
-| `PORT=13673` | `--port 13673` |
-| `OPENAI_MOCK_API_KEY=sk-key` | `--api-key sk-key` |
-| `REQUEST_TIMEOUT=60` | `--request-timeout-secs 60` |
-| `ENABLE_CORS=false` | `--enable-cors false` |
-| `ENABLE_LOGGING=false` | `--enable-logging false` |
-| `LOG_LEVEL=debug` | `--log-level debug` |
-
-**Before (Environment Variables):**
-```bash
-export HOST=127.0.0.1
-export PORT=13673
-export OPENAI_MOCK_API_KEY=sk-test-key
-export LOG_LEVEL=debug
-cargo run
-```
-
-**After (CLI Arguments):**
-```bash
-cargo run -- --host 127.0.0.1 --port 13673 --api-key sk-test-key --log-level debug
-```
-
 ## 🔑 Authentication
 
 All API endpoints require authentication using an API key (configurable via `--api-key`):
@@ -422,7 +394,7 @@ use common::TestServer;
 async fn test_my_feature() {
     // Automatically picks a free port and starts server
     let server = TestServer::start().await.expect("Server should start");
-    
+
     // Test your endpoints
     let client = reqwest::Client::new();
     let response = client
@@ -430,7 +402,7 @@ async fn test_my_feature() {
         .send()
         .await
         .expect("Health check should work");
-    
+
     assert!(response.status().is_success());
     // Server automatically stops when dropped
 }
@@ -447,7 +419,7 @@ async fn test_with_custom_port() {
         .port(port)
         .api_key("sk-test-key")
         .build();
-    
+
     // Use config to start server...
 }
 ```
